@@ -1,0 +1,50 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+
+[numthreads(8, 8, 1)]
+void CSMain(uint3 groupId : SV_GroupID,
+    uint3 groupThreadId : SV_GroupThreadID,
+    uint3 dispatchThreadId : SV_DispatchThreadID,
+    uint groupIndex : SV_GroupIndex)
+{
+    // TODO: insert actual code here!
+
+    //Result[dispatchThreadId.xy] = float4(
+    //    dispatchThreadId.x & dispatchThreadId.y,
+    //    (dispatchThreadId.x & 15) / 15.0,
+    //    (dispatchThreadId.y & 15) / 15.0,
+    //    0.0
+    //);
+    
+    //int dev = 2;
+    //int halfDev = dev >> 1;
+    //float valueX = (groupId.x % dev) >= halfDev ? 1.0 : 0.0;
+    //float valueY = (groupId.y % dev) >= halfDev ? 1.0 : 0.0;
+    
+    //int dev = 16;
+    //int halfDev = dev >> 1;
+    //float valueX = (dispatchThreadId.x % dev) >= halfDev;
+    //float valueY = (dispatchThreadId.y % dev) >= halfDev;
+    
+    //int dev = 8;
+    //int halfDev = dev >> 1;
+    //float valueX = (groupThreadId.x % dev) >= halfDev;
+    //float valueY = (groupThreadId.y % dev) >= halfDev;
+    
+    //float value = valueY ? valueX : 1 - valueX;
+    //Result[dispatchThreadId.xy] = float4(value, value, value, 0.0);
+    
+    //float valueX = 1 - (groupIndex % 8) / 8.0;
+    //float valueY = 1 - (groupIndex / 8) / 8.0;
+    //Result[dispatchThreadId.xy] = float4(valueX, valueY, 0, 0.0);
+    //Result[id.xy] = float4((id.z & 15) / 15.0, (id.x & 15) / 15.0, (id.y & 15) / 15.0, 0.0);
+    
+    Result[dispatchThreadId.xy] = float4(dispatchThreadId.x / 256.0, dispatchThreadId.y / 256.0, 0.0, 0.0);
+    
+    //float value = groupId.x <= 17 && groupId.x >= 14 && groupId.y <= 17 && groupId.y >= 14;
+    //Result[dispatchThreadId.xy] = float4(value, value, value, 0.0);
+}

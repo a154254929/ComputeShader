@@ -1,0 +1,48 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel VoronoiMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+float4 pointsPositions[100];
+float4 colors[100];
+float pixelsPerCell;
+int gridSize;
+float randomness;
+
+[numthreads(8,8,1)]
+void VoronoiMain(uint3 id : SV_DispatchThreadID)
+{
+    int gridX = id.x / pixelsPerCell;
+    int gridY = id.y / pixelsPerCell;
+
+    float nearestDistance = 99999999;
+    uint nearestPoint;
+
+    // 取九宫格周围的点
+    for (int a = -1; a < 2; a++)
+    {
+        for (int b = -1; b < 2; b++)
+        {
+            int X = gridX + a;
+            int Y = gridY + b;
+            if (X < 0 || Y < 0 || X >= gridSize || Y >= gridSize)
+            {
+                continue;
+            }
+
+            float distance = length(id.xy - lerp(
+                float2(X * pixelsPerCell, Y * pixelsPerCell),
+                pointsPositions[X + Y * gridSize].xy,
+                randomness
+            ));
+            if (distance < nearestDistance)
+            {
+                nearestDistance = distance;
+                nearestPoint = X + Y * gridSize;
+            }
+        }
+    }
+    Result[id.xy] = colors[nearestPoint];
+    //Result[id.xy] = saturate(nearestDistance / (pixelsPerCell));
+}
