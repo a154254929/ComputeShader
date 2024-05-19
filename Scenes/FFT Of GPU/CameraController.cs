@@ -13,9 +13,12 @@ public class CameraController : MonoBehaviour
     private float rotateX = 0f;        // 摄像机绕x轴的旋转角度
     private float rotateY = 0f;        // 摄像机绕y轴的旋转角度
     private float zoomDistance = 10f;  // 摄像机与目标的距离
+    private bool rotating = false;
 
     void Start()
     {
+        rotateX = transform.rotation.eulerAngles.y;
+        rotateY = -transform.rotation.eulerAngles.x;
         lastMousePos = Input.mousePosition;
         currentMousePos = Input.mousePosition;
     }
@@ -25,17 +28,28 @@ public class CameraController : MonoBehaviour
         // 鼠标右键旋转摄像机
         if (Input.GetMouseButton(1))
         {
-            currentMousePos = Input.mousePosition;
-            Vector3 delta = currentMousePos - lastMousePos;
-            rotateX += delta.x * rotateSpeed * Time.deltaTime;
-            rotateY -= delta.y * rotateSpeed * Time.deltaTime;
-            rotateY = Mathf.Clamp(rotateY, -90f, 90f);
-            transform.rotation = Quaternion.Euler(-rotateY, rotateX, 0f);
-            lastMousePos = currentMousePos;
+            if (rotating)
+            {
+                currentMousePos = Input.mousePosition;
+                Vector3 delta = currentMousePos - lastMousePos;
+                rotateX += delta.x * rotateSpeed / 1000;
+                rotateY += delta.y * rotateSpeed / 1000;
+                rotateY = Mathf.Clamp(rotateY, -89.9f, 89.9f);
+                transform.rotation = Quaternion.Euler(-rotateY, rotateX, 0);
+                lastMousePos = currentMousePos;
+            }
+            else
+            {
+                rotating = true;
+                lastMousePos = Input.mousePosition;
+            }
         }
         else
         {
-            lastMousePos = Input.mousePosition;
+            if (rotating)
+            {
+                rotating = false;
+            }
         }
 
         if (Input.GetKey(KeyCode.LeftShift))
@@ -62,17 +76,17 @@ public class CameraController : MonoBehaviour
         float y = 0f;
         if (Input.GetKey(KeyCode.Q))
         {
-            y = 1f;
+            y = -1f;
         }
         else if (Input.GetKey(KeyCode.E))
         {
-            y = -1f;
+            y = 1f;
         }
         transform.position += Vector3.up * y * moveSpeed * Time.deltaTime;
 
         // 更新摄像机的位置和朝向
-        Vector3 targetPos = transform.position - transform.forward * zoomDistance;
-        transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * 10f);
-        transform.LookAt(transform.position + transform.forward * 10f);
+        //Vector3 targetPos = transform.position - transform.forward * zoomDistance;
+        //transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * 10f);
+        //transform.LookAt(transform.position + transform.forward * 10f);
     }
 }
