@@ -35,7 +35,17 @@ void CSCulling(uint3 id : SV_DispatchThreadID)
 		//uint mips = (uint)clamp(log2(scWid), 0,7);
 		uint mips = (uint)clamp(log2(scWid), 0,7);
 		uint2 uv = uint2(clipPos.xy * (1024 >> mips));
-		float minD = min(
+		//float minD = (min(
+		//	min(
+		//		HZB_Depth.mips[mips][uv.xy + uint2(0, 0)].r,
+		//		HZB_Depth.mips[mips][uv.xy + uint2(0, 1)].r
+		//	),
+		//	min(
+		//		HZB_Depth.mips[mips][uv.xy + uint2(1, 0)].r,
+		//		HZB_Depth.mips[mips][uv.xy + uint2(1, 1)].r
+		//	)
+		//));
+		float minD = min(min(min(
 			min(
 				HZB_Depth.mips[mips][uv.xy + uint2(0, 0)].r,
 				HZB_Depth.mips[mips][uv.xy + uint2(0, 1)].r
@@ -44,7 +54,16 @@ void CSCulling(uint3 id : SV_DispatchThreadID)
 				HZB_Depth.mips[mips][uv.xy + uint2(1, 0)].r,
 				HZB_Depth.mips[mips][uv.xy + uint2(1, 1)].r
 			)
-		);
+		), min(
+			min(
+				HZB_Depth.mips[mips][uv.xy + uint2(-1, 1)].r,
+				HZB_Depth.mips[mips][uv.xy + uint2(-1, 0)].r
+			),
+			min(
+				HZB_Depth.mips[mips][uv.xy + uint2(-1, -1)].r,
+				HZB_Depth.mips[mips][uv.xy + uint2(1, -1)].r
+			)
+		)), HZB_Depth.mips[mips][uv.xy + uint2(0, -1)].r);
 		if (minD > clipPos.z)return;
 	}
 	int currentIndex;

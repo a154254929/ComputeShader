@@ -50,10 +50,14 @@ Shader "HZB/HZBBuild"
 				float2 invSize = _InvSize.xy;
 				float2 inUV = input.uv;
                 float4 samplerDepth;
-                float2 uv0 = inUV + float2(-0.5f, -0.5f) * _InvSize;
-                float2 uv1 = inUV + float2(0.5f, -0.5f) * _InvSize;
-                float2 uv2 = inUV + float2(-0.5f, 0.5f) * _InvSize;
-                float2 uv3 = inUV + float2(0.5f, 0.5f) * _InvSize;
+                float2 uv0 = inUV + float2(-0.25f, -0.25f) * _InvSize;
+                float2 uv1 = inUV + float2(0.25f, -0.25f) * _InvSize;
+                float2 uv2 = inUV + float2(-0.25f, 0.25f) * _InvSize;
+                float2 uv3 = inUV + float2(0.25f, 0.25f) * _InvSize;
+                //float2 uv0 = inUV + float2(-0.5f, -0.5f) * _InvSize;
+                //float2 uv1 = inUV + float2(0.5f, -0.5f) * _InvSize;
+                //float2 uv2 = inUV + float2(-0.5f, 0.5f) * _InvSize;
+                //float2 uv3 = inUV + float2(0.5f, 0.5f) * _InvSize;
 
                 samplerDepth.x = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv0).x;
                 samplerDepth.y = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv1).x;
